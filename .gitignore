@@ -1,0 +1,6 @@
+_build/
+*.swp
+*.out
+*.o
+*.pyc
+.DS_Store

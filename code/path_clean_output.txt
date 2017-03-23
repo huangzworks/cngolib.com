@@ -1,0 +1,6 @@
+lean("a/c") = "a/c"
+Clean("a//c") = "a/c"
+Clean("a/c/.") = "a/c"
+Clean("a/c/b/..") = "a/c"
+Clean("/../a/c") = "/a/c"
+Clean("/../a/b/../././/c") = "/a/c"

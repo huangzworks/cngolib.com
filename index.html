@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>关于 &mdash; Go 标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="#" />
+    <link rel="next" title="hash" href="hash.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='index.html'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="#">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>本文档是 <a class="reference external" href="https://golang.org/pkg/">Go 标准库文档</a>的中文翻译版，
+翻译工作现正进行中，
+追踪更新请关注<a class="reference external" href="https://github.com/huangz1990/cngolib">本项目的 GitHub 页面</a>或者译者的<a class="reference external" href="http://weibo.com/huangz1990">微博</a>以及 <a class="reference external" href="https://twitter.com/huangz1990">twitter</a>。</p>
+<p>因为时间关系，
+本文档的翻译工作进行得较为仓促，
+所以译文可能会有不少不尽人意的地方，
+忘各位不吝指正！</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hash.html">hash</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#id2">Hash 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#hash32">Hash32 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#hash64">Hash64 类型</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="container-list.html">container/list</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="container-list.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="container-list.html#element">Element 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="container-list.html#list">List 类型</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="io-ioutil.html">io/ioutil</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#id2">变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#nopcloser">NopCloser 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#readall">ReadAll 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#readdir">ReadDir 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#readfile">ReadFile 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#tempdir">TempDir 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#tempfile">TempFile 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io-ioutil.html#writefile">WriteFile 函数</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="path.html">path</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="path.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#id2">变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#base">Base 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#clean">Clean 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#dir">Dir 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#ext">Ext 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#isabs">IsAbs 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#join">Join 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#match">Match 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path.html#split">Split 函数</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="encoding-xml.html">encoding/xml</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#id1">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#id2">常量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#id3">变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#escape">Escape 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#escapetext">EscapeText 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#marshal">Marshal 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#marshalindent">MarshalIndent 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#unmarshal">Unmarshal 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#attr">Attr 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#chardata">CharData 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#comment">Comment 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#decoder">Decoder 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#directive">Directive 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#encoder">Encoder 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#endelement">EndElement 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#marshaler">Marshaler 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#marshalerattr">MarshalerAttr 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#name">Name 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#procinst">ProcInst 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#startelement">StartElement 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#syntaxerror">SyntaxError 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#tagpatherror">TagPathError 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#token">Token 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#unmarshalerror">UnmarshalError 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#unmarshaler">Unmarshaler 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#unmarshalerattr">UnmarshalerAttr 类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding-xml.html#unsupportedtypeerror">UnsupportedTypeError 类型</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h1>关于<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h1>
+<p>本文档由<a class="reference external" href="http://huangz.me/">黄健宏（huangz）</a>翻译，
+保留所有权利，
+禁止转载。</p>
+<p>Portions of this page are modifications based on work created and <a class="reference external" href="https://developers.google.com/terms/site-policies">shared by Google</a> and used according to terms described in the <a class="reference external" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0 Attribution License</a> .</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="hash.html"
+                        title="下一章">hash</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

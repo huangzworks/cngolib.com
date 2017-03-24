@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>io/ioutil &mdash; Go 标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="path" href="path.html" />
+    <link rel="prev" title="container/list" href="container-list.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='index.html'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="io-ioutil">
+<h1>io/ioutil<a class="headerlink" href="#io-ioutil" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 io/ioutil 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/io/ioutil/">https://golang.org/pkg/io/ioutil/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>ioutil 包实现了一些 I/O 实用函数。</p>
+</div>
+<div class="section" id="id2">
+<h2>变量<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Discard 是一个 io.Writer ，
+它的所有成功执行的 Write 操作都不会产生任何实际的效果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">Discard</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span> <span class="p">=</span> <span class="nx">devNull</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="nopcloser">
+<h2>NopCloser 函数<a class="headerlink" href="#nopcloser" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NopCloser</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadCloser</span>
+</pre></div>
+</div>
+<p>NopCloser 返回一个包裹起给定 Reader r 的 ReadCloser ，
+这个 ReadCloser 带有一个无参数的 Close 方法。</p>
+</div>
+<div class="section" id="readall">
+<h2>ReadAll 函数<a class="headerlink" href="#readall" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">ReadAll</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>对 r 进行读取，
+直到发生错误或者遇到 EOF 为止，
+然后返回被读取的数据。
+一次成功的读取将返回 nil 而不是 EOF 作为 err 的值：
+这是因为 ReadAll 的定义就是要读取 r 直到遇到 EOF 为止，
+所以它不会把读取到的 EOF 当做错误，
+也不会向调用者返回它。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;log&quot;</span>
+	<span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="s">&quot;Go is a general-purpose language designed with systems programming in mind.&quot;</span><span class="p">)</span>
+
+	<span class="nx">b</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">Go</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">general</span><span class="o">-</span><span class="nx">purpose</span> <span class="nx">language</span> <span class="nx">designed</span> <span class="nx">with</span> <span class="nx">systems</span> <span class="nx">programming</span> <span class="nx">in</span> <span class="nx">mind</span><span class="p">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="readdir">
+<h2>ReadDir 函数<a class="headerlink" href="#readdir" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">ReadDir</span><span class="p">(</span><span class="nx">dirname</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>读取 dirname 指定的目录，
+并返回一个根据文件名进行排序的目录节点列表。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;log&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">files</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadDir</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">file</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">files</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">Name</span><span class="p">())</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">dev</span>
+<span class="nx">etc</span>
+<span class="nx">tmp</span>
+<span class="nx">usr</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="readfile">
+<h2>ReadFile 函数<a class="headerlink" href="#readfile" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">ReadFile</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>读取名字为 filename 的文件并返回文件中的内容。
+一次成功的读取将返回 nil 而不是 EOF 作为 err 的值：
+这是因为 ReadFile 的定义就是要读取整个文件，
+所以它不会把读取到的 EOF 当做错误，
+也不会向调用者返回它。</p>
+</div>
+<div class="section" id="tempdir">
+<h2>TempDir 函数<a class="headerlink" href="#tempdir" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">TempDir</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在目录 dir 中新创建一个带有指定前缀 prefix 的临时目录，
+然后返回该目录的路径。
+如果 dir 的值是一个空字符串，
+那么 TempDir 将使用 os.TempDir 中指定的目录作为创建临时文件的默认目录。</p>
+<p>即使有多个程序同时调用 TempDir ，
+TempDir 也不会创建出相同的目录。</p>
+<p>调用者负责在使用完这个临时目录之后删除它。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;log&quot;</span>
+	<span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">dir</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempDir</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;example&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">defer</span> <span class="nx">os</span><span class="p">.</span><span class="nx">RemoveAll</span><span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="c1">// clean up</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">dir</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="o">/</span><span class="nx">tmp</span><span class="o">/</span><span class="nx">example054003078</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tempfile">
+<h2>TempFile 函数<a class="headerlink" href="#tempfile" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">TempFile</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在目录 dir 新创建一个名字带有指定前缀 prefix 的临时文件，
+以可读写的方式打开它，
+并返回一个 *os.File 指针。</p>
+<p>如果 dir 的值是一个空字符串，
+那么 TempFile 将使用 os.TempDir 中指定的目录作为创建临时文件的默认目录。</p>
+<p>即使有多个程序同时调用 TempFile ，
+TempFile 也不会创建出相同的文件。</p>
+<p>调用者可以通过 f.Name() 来获取这个文件的路径名。</p>
+<p>调用者负责在使用完这个临时文件之后删除它。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;log&quot;</span>
+	<span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">tmpfile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempFile</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;example&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">defer</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">tmpfile</span><span class="p">.</span><span class="nx">Name</span><span class="p">())</span> <span class="c1">// clean up</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">tmpfile</span><span class="p">.</span><span class="nx">Name</span><span class="p">())</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="o">/</span><span class="nx">tmp</span><span class="o">/</span><span class="nx">example054003078</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writefile">
+<h2>WriteFile 函数<a class="headerlink" href="#writefile" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">WriteFile</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">perm</span> <span class="nx">os</span><span class="p">.</span><span class="nx">FileMode</span><span class="p">)</span> <span class="kt">error</span>
+</pre></div>
+</div>
+<p>将给定的数据 data 写入到名字为 filename 的文件里面。
+如果文件不存在，
+那么使用给定的权限 perm 去创建它；
+如果文件已经存在，
+那么 WriteFile 在对其进行写入之前会先清空文件中已有的内容。</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">io/ioutil</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#id2">变量</a></li>
+<li><a class="reference internal" href="#nopcloser">NopCloser 函数</a></li>
+<li><a class="reference internal" href="#readall">ReadAll 函数</a></li>
+<li><a class="reference internal" href="#readdir">ReadDir 函数</a></li>
+<li><a class="reference internal" href="#readfile">ReadFile 函数</a></li>
+<li><a class="reference internal" href="#tempdir">TempDir 函数</a></li>
+<li><a class="reference internal" href="#tempfile">TempFile 函数</a></li>
+<li><a class="reference internal" href="#writefile">WriteFile 函数</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="container-list.html"
+                        title="上一章">container/list</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="path.html"
+                        title="下一章">path</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

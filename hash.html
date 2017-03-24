@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>hash &mdash; Go 标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="container/list" href="container-list.html" />
+    <link rel="prev" title="关于" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='index.html'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hash">
+<h1>hash<a class="headerlink" href="#hash" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 hash 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/hash/">https://golang.org/pkg/hash/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>hash 包提供了实现散列函数所需的接口。</p>
+</div>
+<div class="section" id="id2">
+<h2>Hash 类型<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>Hash 是实现散列函数所需的公共接口。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Hash</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="c1">// 通过 Write 方法将更多数据添加到正在运行的散列当中。</span>
+    <span class="c1">// 这个方法不会返回错误。</span>
+    <span class="c1">// Write 方法通过嵌入 io.Writer 接口来实现。</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>
+
+    <span class="c1">// 将当前散列追加至 b 的末尾，并返回结果切片。</span>
+    <span class="c1">// 这一操作不会改变底层散列的状态。</span>
+    <span class="nx">Sum</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span>
+
+    <span class="c1">// 将散列重置至初始化状态。</span>
+    <span class="nx">Reset</span><span class="p">()</span>
+
+    <span class="c1">// 返回 Sum 会返回的字节数。</span>
+    <span class="nx">Size</span><span class="p">()</span> <span class="kt">int</span>
+
+    <span class="c1">// 返回散列的底层块大小。</span>
+    <span class="c1">// Write 必须能够接受任何大小的数据，</span>
+    <span class="c1">// 但如果写入的数据量总是块大小的某个倍数的话，</span>
+    <span class="c1">// 那么写入就会变得更为高效。</span>
+    <span class="nx">BlockSize</span><span class="p">()</span> <span class="kt">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hash32">
+<h2>Hash32 类型<a class="headerlink" href="#hash32" title="永久链接至标题">¶</a></h2>
+<p>Hash32 是实现 32 位散列函数所需的公共接口。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Hash32</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Hash</span>
+    <span class="nx">Sum32</span><span class="p">()</span> <span class="kt">uint32</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hash64">
+<h2>Hash64 类型<a class="headerlink" href="#hash64" title="永久链接至标题">¶</a></h2>
+<p>Hash64 是实现 64 位散列函数所需的公共接口。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Hash64</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Hash</span>
+    <span class="nx">Sum64</span><span class="p">()</span> <span class="kt">uint64</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">hash</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#id2">Hash 类型</a></li>
+<li><a class="reference internal" href="#hash32">Hash32 类型</a></li>
+<li><a class="reference internal" href="#hash64">Hash64 类型</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="index.html"
+                        title="上一章">关于</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="container-list.html"
+                        title="下一章">container/list</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

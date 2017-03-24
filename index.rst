@@ -5,7 +5,7 @@
 
 本文档是 `Go 标准库文档 <https://golang.org/pkg/>`_\ 的中文翻译版，
 翻译工作现正进行中，
-追踪更新请关注\ `本项目的 GitHub 页面 <https://github.com/huangz1990/cngolib>`_\ 或者译者的\ `微博 <http://weibo.com/huangz1990>`_\ 以及 `twitter <https://twitter.com/huangz1990>`_\ 。
+追踪更新请关注\ `本项目的 GitHub 页面 <https://github.com/huangz1990/cngolib.com>`_\ 或者译者的\ `微博 <http://weibo.com/huangz1990>`_\ 以及 `twitter <https://twitter.com/huangz1990>`_\ 。
 
 因为时间关系，
 本文档的翻译工作进行得较为仓促，

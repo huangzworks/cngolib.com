@@ -41,11 +41,11 @@ Base 函数
 
 示例：
 
-.. literalinclude:: code/path_base.go
+.. literalinclude:: code/path/base.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_base_output.txt
+.. literalinclude:: code/path/base.txt
 
 
 Clean 函数
@@ -78,11 +78,11 @@ Clean 函数会根据以下规则进行迭代，
 
 示例：
 
-.. literalinclude:: code/path_clean.go
+.. literalinclude:: code/path/clean.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_clean_output.txt
+.. literalinclude:: code/path/clean.txt
 
 
 Dir 函数
@@ -109,11 +109,11 @@ Dir 函数
 
 示例：
 
-.. literalinclude:: code/path_dir.go
+.. literalinclude:: code/path/dir.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_dir_output.txt
+.. literalinclude:: code/path/dir.txt
 
 
 Ext 函数
@@ -131,11 +131,11 @@ Ext 函数
 
 示例：
 
-.. literalinclude:: code/path_ext.go
+.. literalinclude:: code/path/ext.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_ext_output.txt
+.. literalinclude:: code/path/ext.txt
 
 
 IsAbs 函数
@@ -149,11 +149,11 @@ IsAbs 函数
 
 示例：
 
-.. literalinclude:: code/path_is_abs.go
+.. literalinclude:: code/path/is_abs.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_is_abs_output.txt
+.. literalinclude:: code/path/is_abs.txt
 
 
 Join 函数
@@ -172,11 +172,11 @@ Join 函数
 
 示例：
 
-.. literalinclude:: code/path_join.go
+.. literalinclude:: code/path/join.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_join_output.txt
+.. literalinclude:: code/path/join.txt
 
 
 Match 函数
@@ -235,8 +235,8 @@ path = dir + file 。
 
 示例：
 
-.. literalinclude:: code/path_split.go
+.. literalinclude:: code/path/split.go
 
 示例执行结果：
 
-.. literalinclude:: code/path_split_output.txt
+.. literalinclude:: code/path/split.txt

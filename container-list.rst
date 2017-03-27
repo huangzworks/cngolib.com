@@ -22,11 +22,11 @@ list 包实现了一个双链表（doubly linked list）。
 
 示例：
 
-.. literalinclude:: code/iterate_list.go
+.. literalinclude:: code/list/iterate_list.go
 
 示例执行结果：
 
-.. literalinclude:: code/iterate_list_output.txt
+.. literalinclude:: code/list/iterate_list.txt
 
 
 Element 类型

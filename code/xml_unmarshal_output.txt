@@ -1,6 +1,0 @@
-me: xml.Name{Space:"", Local:"Person"}
-Name: "Grace R. Emlin"
-Phone: "none"
-Email: [{home gre@example.com} {work gre@work.com}]
-Groups: [Friends Squash]
-Address: {Hanga Roa Easter Island}

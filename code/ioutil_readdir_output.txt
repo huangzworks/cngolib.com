@@ -1,4 +1,0 @@
-dev
-etc
-tmp
-usr

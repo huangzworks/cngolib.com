@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   database-sql
    hash
    container-list
    io-ioutil

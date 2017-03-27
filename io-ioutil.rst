@@ -51,11 +51,11 @@ ReadAll 函数
 
 示例：
 
-.. literalinclude:: code/ioutil_readall.go
+.. literalinclude:: code/ioutil/readall.go
 
 示例执行结果：
 
-.. literalinclude:: code/ioutil_readall_output.txt
+.. literalinclude:: code/ioutil/readall.txt
 
 
 ReadDir 函数
@@ -70,11 +70,11 @@ ReadDir 函数
 
 示例：
 
-.. literalinclude:: code/ioutil_readdir.go
+.. literalinclude:: code/ioutil/readdir.go
 
 示例执行结果：
 
-.. literalinclude:: code/ioutil_readdir_output.txt
+.. literalinclude:: code/ioutil/readdir.txt
 
 
 ReadFile 函数
@@ -110,11 +110,11 @@ TempDir 也不会创建出相同的目录。
 
 示例：
 
-.. literalinclude:: code/ioutil_tempdir.go
+.. literalinclude:: code/ioutil/tempdir.go
 
 示例执行结果：
 
-.. literalinclude:: code/ioutil_tempdir_output.txt
+.. literalinclude:: code/ioutil/tempdir.txt
 
 
 TempFile 函数
@@ -140,11 +140,11 @@ TempFile 也不会创建出相同的文件。
 
 示例：
 
-.. literalinclude:: code/ioutil_tempfile.go
+.. literalinclude:: code/ioutil/tempfile.go
 
 示例执行结果：
 
-.. literalinclude:: code/ioutil_tempfile_output.txt
+.. literalinclude:: code/ioutil/tempfile.txt
 
 
 WriteFile 函数

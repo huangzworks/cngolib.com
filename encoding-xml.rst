@@ -180,11 +180,11 @@ indent 出现的数量由行的嵌套深度决定。
 
 示例：
 
-.. literalinclude:: code/xml_marshalindent.go
+.. literalinclude:: code/xml/marshalindent.go
 
 示例执行结果：
 
-.. literalinclude:: code/xml_marshalindent_output.xml
+.. literalinclude:: code/xml/marshalindent.xml
    :language: xml
 
 
@@ -305,11 +305,11 @@ Phone 字段并未被修改，
 此外，
 Groups 字段也是根据标签里面提供的元素路径来进行设置的。
 
-.. literalinclude:: code/xml_unmarshal.go
+.. literalinclude:: code/xml/unmarshal.go
 
 输出：
 
-.. literalinclude:: code/xml_unmarshal_output.txt
+.. literalinclude:: code/xml/unmarshal.txt
 
 
 Attr 类型
@@ -563,11 +563,11 @@ Encoder 负责把 XML 数据写入至输出流里面：
 
 示例：
 
-.. literalinclude:: code/xml_encoder.go
+.. literalinclude:: code/xml/encoder.go
 
 示例执行结果：
 
-.. literalinclude:: code/xml_encoder_output.xml
+.. literalinclude:: code/xml/encoder.xml
    :language: xml
 
 NewEncoder 函数

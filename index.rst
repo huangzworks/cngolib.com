@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   container-heap
    errors
    hash
    container-list

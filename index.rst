@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   errors
    hash
    container-list
    io-ioutil

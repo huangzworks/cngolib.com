@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Go标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="hash" href="hash.html" />
+    <link rel="prev" title="关于" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='http://cngolib.com'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="errors">
+<h1>errors<a class="headerlink" href="#errors" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 errors 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/errors/">https://golang.org/pkg/errors/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>errors 包实现了用于处理错误的函数。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// MyError 是一个包含了时间和消息的错误实现</span>
+<span class="kd">type</span> <span class="nx">MyError</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">When</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+	<span class="nx">What</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="nx">MyError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%v: %v&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">When</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">What</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">oops</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">MyError</span><span class="p">{</span>
+		<span class="nx">time</span><span class="p">.</span><span class="nx">Date</span><span class="p">(</span><span class="mi">1989</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">UTC</span><span class="p">),</span>
+		<span class="s">&quot;the file system has gone away&quot;</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">oops</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="mi">1989</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">15</span> <span class="mi">22</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mo">00</span> <span class="o">+</span><span class="mo">0000</span> <span class="nx">UTC</span><span class="p">:</span> <span class="nx">the</span> <span class="nx">file</span> <span class="nx">system</span> <span class="nx">has</span> <span class="nx">gone</span> <span class="nx">away</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="new">
+<h2>New 函数<a class="headerlink" href="#new" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">New</span><span class="p">(</span><span class="nx">text</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+</pre></div>
+</div>
+<p>根据给定的文本返回一个错误。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;errors&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;emit macho dwarf: elf header corrupted&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">emit</span> <span class="nx">macho</span> <span class="nx">dwarf</span><span class="p">:</span> <span class="nx">elf</span> <span class="nx">header</span> <span class="nx">corrupted</span>
+</pre></div>
+</div>
+<p>fmt 包的 Errorf 函数可以让用户使用该包的格式化功能来创建描述错误的消息。</p>
+<p>示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">const</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">id</span> <span class="p">=</span> <span class="s">&quot;bimmler&quot;</span><span class="p">,</span> <span class="mi">17</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;user %q (id %d) not found&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">user</span> <span class="s">&quot;bimmler&quot;</span> <span class="p">(</span><span class="nx">id</span> <span class="mi">17</span><span class="p">)</span> <span class="nx">not</span> <span class="nx">found</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">errors</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#new">New 函数</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="index.html"
+                        title="上一章">关于</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="hash.html"
+                        title="下一章">hash</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   database-sql
    errors
    hash
    container-list

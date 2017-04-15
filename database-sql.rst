@@ -48,7 +48,7 @@ Drivers 函数
 
     func Drivers() []string
 
-以有序列表的实行返回所有已注册驱动的名字。
+以有序列表的形式返回所有已注册驱动的名字。
 
 
 
@@ -89,7 +89,7 @@ ColumnType 包含了数据列的名字以及类型：
 
 返回空字符表示该驱动类型名字并未被支持。
 
-驱动数据类型可以通过查看驱动的文档来得到。
+驱动的数据类型可以通过查看驱动的文档来得到。
 
 长度指示器不会被包含在内（Length specifiers are not included）。
 
@@ -125,7 +125,6 @@ ColumnType 包含了数据列的名字以及类型：
 比如 int ，
 又或者驱动并不支持该类型，
 那么返回值 ok 参数的值将被设置为 false 。
-那么值将被设置为 math.MaxInt64
 
 (\*ColumnType) Name 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -173,7 +172,7 @@ DB 是一个数据库句柄，
 sql 包会自动地创建和释放连接，
 并且它也会维护一个由闲置（idle）连接组成的释放池（free pool）。
 如果数据库拥有预连接状态（pre-connection state）这一概念，
-那么这种状态只能在事务内部被观察到（observed）。
+那么这种状态只会在事务内部可见（observed）。
 
 当 DB.Begin 被调用时，
 它返回的 Tx 将与单个连接绑定，
@@ -195,13 +194,13 @@ Open 函数
     func Open(driverName, dataSourceName string) (*DB, error)
 
 Open 函数会根据给定的数据库驱动以及驱动专属的数据源来打开一个数据库，
-驱动专属的数据源通常至少都会包含数据库的名字以及相关的连接信息。
+驱动专属的数据源一般至少会包含数据库的名字以及相关的连接信息。
 
 大多数用户都会通过驱动专属的辅助函数来打开数据库，
 这种函数会返回一个指向 DB 结构的指针。
 Go 的标准库不包含任何数据库驱动，
 所有数据库驱动都是第三方的，
-这些驱动可以在 https://golang.org/s/sqldrivers 看到。
+https://golang.org/s/sqldrivers 列出了可用的第三方驱动。
 
 Open 有可能会只对参数进行检查，
 但是却并不创建实际的数据库连接。
@@ -211,7 +210,7 @@ Open 函数返回的 DB 可以安全地由多个 goroutine 进行并发使用，
 并且 DB 也会维护它自有的闲置连接池。
 因此，
 Oepn 函数通常只需要调用一次，
-并且用户很少需要手动地关闭一个 DB 。
+并且用户通常不需要手动地关闭一个 DB 。
 
 (\*DB) Begin 方法
 ^^^^^^^^^^^^^^^^^^^^
@@ -220,7 +219,7 @@ Oepn 函数通常只需要调用一次，
 
     func (db *DB) Begin() (*Tx, error)
 
-Begin 方法开启一个事务。
+开启一个事务，
 事务的隔离级别由驱动决定。
 
 (\*DB) BeginTx 方法
@@ -249,12 +248,11 @@ TxOptions 参数是可选的，
 
     func (db *DB) Close() error
 
-Close 方法关闭数据库，
-并释放所有已打开的资源。
+关闭数据库并释放所有已打开的资源。
 
 因为 DB 句柄通常会长时间存在，
 并且会有多个 goroutine 进行分享，
-所以用户很少需要手动地关闭数据库。
+所以用户一般不需要手动地关闭数据库。
 
 (\*DB) Driver 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -283,9 +281,7 @@ Close 方法关闭数据库，
 
     func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (Result, error)
 
-执行一个查询，
-但不返回任何数据行。
-args 参数可以用于放置查询中的占位符参数。
+同上。
 
 (\*DB) Ping 方法
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -304,8 +300,7 @@ args 参数可以用于放置查询中的占位符参数。
 
     func (db *DB) PingContext(ctx context.Context) error
 
-检查与数据库的连接是否仍在有效，
-并在有需要时创建一个连接。
+同上。
 
 (\*DB) Prepare 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -326,13 +321,13 @@ args 参数可以用于放置查询中的占位符参数。
 
     func (db *DB) PrepareContext(ctx context.Context, query string) (*Stmt, error)
 
-为之后的查询或执行创建预处理语句。
-多个查询或者执行可以并发地使用这个方法返回的语句。
+为之后的查询或执行（execution）创建预处理语句，
+多个查询或者执行可以并发地使用 Prepare 返回的预处理语句。
 当调用者不再需要这个预处理语句时，
 它必须调用这个语句的 Close 方法。
 
 给定的上下文将在创建预处理语句时使用，
-而不是再执行该语句时使用。
+而不是在执行该语句时使用。
 
 (\*DB) Query 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -437,9 +432,7 @@ args 参数可以用于放置查询中的占位符参数。
 
     func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*Rows, error)
 
-执行一个会返回任意多个行的查询，
-通常是一个 SELECT 。
-方法的 arg 部分用于填写查询语句中包含的占位符的实际参数。
+同上。
 
 (\*DB) QueryRow 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -449,9 +442,9 @@ args 参数可以用于放置查询中的占位符参数。
     func (db *DB) QueryRow(query string, args ...interface{}) *Row
 
 执行一个预期最多只会返回一个数据行的查询。
-这个方法总是会返回一个非空的值。
-这个方法引起的错误会被推延， 
-直到数据行的 Scan 方法被调用为止。
+
+这个方法总是会返回一个非空的值，
+而它引起的错误则会被推延到数据行的 Scan 方法被调用为止。
 
 示例：
 
@@ -476,10 +469,7 @@ args 参数可以用于放置查询中的占位符参数。
 
     func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interface{}) *Row
 
-执行一个预期最多只会返回一个数据行的查询。
-这个方法总是会返回一个非空的值。
-这个方法引起的错误会被推延， 
-直到数据行的 Scan 方法被调用为止。
+同上。
 
 (\*DB) SetConnMaxLifetime 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -492,7 +482,8 @@ args 参数可以用于放置查询中的占位符参数。
 
 过期的连接可以在重用之前惰性地进行关闭。
 
-如果 d <= 0 ，那么该连接可以一直进行重用。
+如果 d <= 0 ，
+那么连接将一直可用。
 
 (\*DB) SetMaxIdleConns 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -522,7 +513,7 @@ args 参数可以用于放置查询中的占位符参数。
 那么 MaxIdleConns 的值将设置为与 MaxOpenConns 一样。
 
 如果 n <= 0 ，
-那么表示不对数据库连接的数量进行限制。
+那么表示不限制数据库连接的数量。
 默认值为 0 （无限制）。
 
 (\*DB) Stats 方法
@@ -593,7 +584,7 @@ NamedArg 的值可以用作 Query 或者 Exec 的参数，
 
     type NamedArg struct {
         // 参数占位符的名字。
-        // 如为空，那么使用参数列表中的顺序位置。
+        // 如为空，那么根据参数列表中的排列位置进行设置。
         // Name 必须省略所有符号前缀。
         Name string
 
@@ -639,7 +630,7 @@ NullBool 实现了 Scanner 接口，
 
     type NullBool struct {
         Bool  bool
-        Valid bool // Valid is true if Bool is not NULL
+        Valid bool // 当 Bool 字段的值不为 NULL 时， Valid 字段的值为 true
     }
 
 (\*NullBool) Scan 方法
@@ -812,9 +803,9 @@ LastInsertId() 会返回一个由数据库生成的整数，
 在插入一个新的数据行时，
 这个整数通常来源于数据表中的自增数据列。
 并不是所有数据库都支持这个特性，
-并且各个数据库实现这个特性所使用的语句也会有所不同。
+并且各个数据库在实现这个特性时使用的语句也会有所不同。
 
-RowsAffected() 返回收到更新、插入或者删除操作影响的行数量。
+RowsAffected() 返回受到更新、插入或者删除操作影响的行数量，
 并不是所有数据库或者所有数据库驱动都支持这个特性。
 
 
@@ -837,12 +828,12 @@ Row 是调用 QueryRow 查询单个数据行所得的结果。
 
     func (r *Row) Scan(dest ...interface{}) error
 
-Scan 会将匹配的数据行中的各个列复制到 dest 指向的值里面。
+Scan 会将被匹配数据行中的各个列复制到 dest 指向的值里面，
 更多细节请参考 Rows.Scan 方法的文档。
 如果有多个数据行与查询匹配，
 那么 Scan 将使用第一个数据行并丢弃其他所有数据行。
 如果没有任何数据行与查询匹配，
-那么 Scan 返回 ErrNoRows 。
+那么 Scan 将返回 ErrNoRows 。
 
 
 
@@ -894,11 +885,12 @@ Rows 是查询的结果：
 
     func (rs *Rows) Columns() ([]string, error)
 
-Columns 返回各个列的名字。
+返回各个列的名字。
+
 当数据行已经被关闭时，
 Columns 将返回一个错误；
 当数据行来自于 QueryRow 时，
-Columns 返回一个推延错误。
+Columns 将返回一个推延错误。
 
 (\*Rows) Err 方法
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -907,7 +899,7 @@ Columns 返回一个推延错误。
 
     func (rs *Rows) Err() error
 
-返回迭代过程中出现的任何错误。
+返回迭代过程中出现的任何错误，
 这个方法在数据行显式或者隐式关闭之后仍然可用。
 
 (\*Rows) Next 方法
@@ -917,10 +909,11 @@ Columns 返回一个推延错误。
 
     func (rs *Rows) Next() bool
 
-Next 可以为 Scan 方法准备好下一个待读取的数据行。
+Next 可以为 Scan 方法准备好下一个待读取的数据行：
 这个方法在执行成功时返回 true ；
 返回 false 表示没有下一个数据行可用，
 又或者准备期间发生了错误。
+
 通过 Err 方法可以知道 Next 是因为何种原因而执行失败的。
 
 (\*Rows) Scan 方法
@@ -930,13 +923,12 @@ Next 可以为 Scan 方法准备好下一个待读取的数据行。
 
     func (rs *Rows) Scan(dest ...interface{}) error
 
-将当前被迭代到的数据行的各个列复制到 dest 指向的值里面。
+将当前被迭代数据行的各个列复制到 dest 指向的值里面，
 dest 的值数量必须与数据行中的列数量保持一致。
 
-Scan 会把从数据库里面读取到的各个数据列转换为以下的标准 Go 类型，
+Scan 会把从数据库里面读取到的各个数据列转换为以下标准 Go 类型，
 又或者转换为某些由 sql 包提供的特殊类型：
 
-    
 - \*string
 - \*[]byte
 - \*int, \*int8, \*int16, \*int32, \*int64
@@ -1035,8 +1027,7 @@ Stmt 用于代表预处理语句，
 
     func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (Result, error)
 
-使用给定的参数执行预处理语句，
-并返回一个 Result 值来总结本次执行产生的影响。
+同上。
 
 (\*Stmt) Query 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1055,8 +1046,7 @@ Stmt 用于代表预处理语句，
 
     func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*Rows, error)
 
-使用给定的参数执行预处理语句，
-并以 \*Rows 形式返回查询结果。
+同上。
 
 (\*Stmt) QueryRow 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1072,7 +1062,7 @@ Stmt 用于代表预处理语句，
 因为 Scan 调用总是返回一个非空值，
 所以当查询没有获取到任何数据行时，
 \*Row 的 Scan 调用将返回 ErrNoRows ；
-与此相反，
+另一方面，
 在正常情况下，
 \*Row 的 Scan 调用将返回查询结果中的第一个数据行，
 并丢弃可能存在的所有剩余数据行。
@@ -1108,12 +1098,12 @@ Tx 类型
 
 Tx 是一个进行中的数据库事务。
 
-一个事务必须以调用 Commit 或者 Rollback 为结束。
-
-在调用 Commit 或者 Rollback 之后，
+一个事务必须以调用 Commit 或者 Rollback 为结束，
+在调用这两个方法之中的任何一个之后，
 事务的所有操作都会以 ErrTxDone 的方式失效（fail）。
 
-通过调用事务的 Prepare 或者 Stmt 方法放入到事务里面的语句可以通过Commit 或者 Rollback 来关闭。
+通过 Prepare 方法或者 Stmt 方法放入到事务里面的语句，
+将在 Commit 调用或者 Rollback 调用之后关闭。
 
 ::
 
@@ -1137,7 +1127,7 @@ Tx 是一个进行中的数据库事务。
 
     func (tx *Tx) Exec(query string, args ...interface{}) (Result, error)
 
-执行一个不反悔数据行的查询，
+执行一个不返回数据行的查询，
 比如一个 INSERT 或者一个 UPDATE 。
 
 (\* ExecContext 方法
@@ -1158,11 +1148,11 @@ Tx 是一个进行中的数据库事务。
 
 创建一个可以在事务里面使用的预备语句。
 
-这个方法返回的语句将在事务里面进行操作，
+这个方法返回的语句将在事务中执行，
 并且它在事务提交或者回滚之后将不再可用。
 
 如果你想要在事务里面使用一个已经存在的预备语句，
-那么请使用 Tx.Stmt 。
+那么请使用 Tx.Stmt 方法。
 
 (\*Tx) PrepareContext 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1175,6 +1165,7 @@ Tx 是一个进行中的数据库事务。
 
 给定的上下文将用于预备阶段，
 而不是事务的执行阶段。
+
 这个方法返回的语句将在事务上下文中执行。
 
 (\*Tx) Query 方法
@@ -1204,7 +1195,9 @@ Tx 是一个进行中的数据库事务。
     func (tx *Tx) QueryRow(query string, args ...interface{}) *Row
 
 执行一个预期最多只会返回一个数据行的查询。
+
 这个方法总是返回一个不为 nil 的值。
+
 执行时的错误将推延到数据行的 Scan 方法执行为止。
 
 (\*Tx) QueryRowContext 方法
@@ -1244,9 +1237,9 @@ Tx 是一个进行中的数据库事务。
     ...
     res, err := tx.Stmt(updateMoney).Exec(123.45, 98293203)
     
-这个方法返回的语句将在事务里面进行操作，
-并且当事务已经被提交或者被回滚时，
-这个语句将被关闭。
+这个方法返回的语句将在事务中执行。
+在事务提交或者回滚之后，
+语句也会被关闭。
 
 (\*Tx) StmtContext 方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   testing 
    database-sql
    errors
    hash

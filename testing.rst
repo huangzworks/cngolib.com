@@ -233,3 +233,30 @@ SkipNow 必须在运行测试的 goroutine 中进行调用，
     func (c *T) Skipped() bool
 
 Skipped 用于报告测试函数是否已被跳过。
+
+
+
+TB 类型
+-------------
+
+TB 类型同时拥有 T 类型和 B 类型提供的接口。
+
+::
+
+    type TB interface {
+        Error(args ...interface{})
+        Errorf(format string, args ...interface{})
+        Fail()
+        FailNow()
+        Failed() bool
+        Fatal(args ...interface{})
+        Fatalf(format string, args ...interface{})
+        Log(args ...interface{})
+        Logf(format string, args ...interface{})
+        Name() string
+        Skip(args ...interface{})
+        SkipNow()
+        Skipf(format string, args ...interface{})
+        Skipped() bool
+        // contains filtered or unexported methods
+    }

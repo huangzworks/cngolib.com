@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   net-http-httptest
    database-sql
    errors
    hash

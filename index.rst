@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   sync
    database-sql
    errors
    hash

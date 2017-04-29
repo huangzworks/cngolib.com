@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Go标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="database/sql" href="database-sql.html" />
+    <link rel="prev" title="关于" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='http://cngolib.com'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="httptest">
+<h1>httptest<a class="headerlink" href="#httptest" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 net/http/httptest 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/net/http/httptest/">https://golang.org/pkg/net/http/httptest/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>httptest 包提供了进行 HTTP 测试所需的设施。</p>
+</div>
+<div class="section" id="id2">
+<h2>常量<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>DefaultRemoteAddr 是在 ResponseRecorder 没有显式地设置 DefaultRemoteAddr 时，
+RemoteAddr 返回的默认远程地址。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">const</span> <span class="nx">DefaultRemoteAddr</span> <span class="p">=</span> <span class="s">&quot;1.2.3.4&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="newrequest">
+<h2>NewRequest 函数<a class="headerlink" href="#newrequest" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NewRequest</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">target</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">body</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span>
+</pre></div>
+</div>
+<p>返回一个新的服务器访问请求，
+这个请求可以传递给 http.Handler 以便进行测试。</p>
+<p>target 参数的值为 RFC 7230 中提到的“请求目标”（request-target)：
+它可以是一个路径又或者一个绝对 URL 。
+如果 target 是一个绝对 URL ，
+那么 URL 中的主机名（host name）将被使用；
+否则主机名将为 example.com 。</p>
+<p>当 target 的模式为 https 时，
+TLS 字段的值将被设置为一个非 nil 的随意值（dummy value）。</p>
+<p>Request.Proto 总是为 HTTP/1.1 。</p>
+<p>如果 method 参数的值为空，
+那么使用 GET 方法作为默认值。</p>
+<p>body 参数的值可以为 nil ；
+另一方面，
+如果 body 参数的值为 *bytes.Reader 类型、 *strings.Reader 类型或者 *bytes.Buffer 类型，
+那么 Request.ContentLength 将被设置。</p>
+<p>为了使用的方便，
+NewRequest 将在 panic 可以被接受的情况下，
+使用 panic 代替错误。</p>
+<p>如果你想要生成的不是服务器访问请求，
+而是一个客户端 HTTP 请求，
+那么请使用 net/http 包中的 NewRequest 函数。</p>
+</div>
+<div class="section" id="responserecorder">
+<h2>ResponseRecorder 类型<a class="headerlink" href="#responserecorder" title="永久链接至标题">¶</a></h2>
+<p>ResponseRecorder 是一个 http.ResponseWriter 实现，
+它会记录自身的变化以便在之后的测试中进行检验（inspect）。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">ResponseRecorder</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// Code 是由 WriteHeader 设置的 HTTP 响应码。</span>
+    <span class="c1">//</span>
+    <span class="c1">// 注意，如果一个处理器从来没有调用过 WriteHeader 或者 Write ，</span>
+    <span class="c1">// 那么 Code 的值将会为 0 ，而不是隐含的 http.StatusOK 。</span>
+    <span class="c1">// 如果用户想要在 Code 值为 0 时获得隐含的 http.StatusOK ，</span>
+    <span class="c1">// 那么可以使用 Result 方法。</span>
+    <span class="nx">Code</span> <span class="kt">int</span>
+
+    <span class="c1">// HeaderMap 包含了处理器显式设置的各个 HTTP 首部。</span>
+    <span class="c1">//</span>
+    <span class="c1">// 如果用户想要获得诸如 Content-Type 等一系列由服务器隐式地进行设置的首部，</span>
+    <span class="c1">// 那么可以使用 Result 方法。</span>
+    <span class="nx">HeaderMap</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Header</span>
+
+    <span class="c1">// Body 是处理器调用 Write 进行写入时所使用的缓冲区。</span>
+    <span class="c1">// 如果它的值为 nil ，那么写入的数据将会被静默地丢弃（silently discarded）。</span>
+    <span class="nx">Body</span> <span class="o">*</span><span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+
+    <span class="c1">// Flushed 标记处理器是否调用了 Flush 方法。</span>
+    <span class="nx">Flushed</span> <span class="kt">bool</span>
+
+    <span class="c1">// 其他已过滤或者未导出的字段……</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;net/http&quot;</span>
+	<span class="s">&quot;net/http/httptest&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">handler</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">io</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;&lt;html&gt;&lt;body&gt;Hello World!&lt;/body&gt;&lt;/html&gt;&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">req</span> <span class="o">:=</span> <span class="nx">httptest</span><span class="p">.</span><span class="nx">NewRequest</span><span class="p">(</span><span class="s">&quot;GET&quot;</span><span class="p">,</span> <span class="s">&quot;http://example.com/foo&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+	<span class="nx">w</span> <span class="o">:=</span> <span class="nx">httptest</span><span class="p">.</span><span class="nx">NewRecorder</span><span class="p">()</span>
+	<span class="nx">handler</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+
+	<span class="nx">resp</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Result</span><span class="p">()</span>
+	<span class="nx">body</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">StatusCode</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Header</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;Content-Type&quot;</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">body</span><span class="p">))</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="mi">200</span>
+<span class="nx">text</span><span class="o">/</span><span class="nx">html</span><span class="p">;</span> <span class="nx">charset</span><span class="p">=</span><span class="nx">utf</span><span class="o">-</span><span class="mi">8</span>
+<span class="p">&lt;</span><span class="nx">html</span><span class="p">&gt;&lt;</span><span class="nx">body</span><span class="p">&gt;</span><span class="nx">Hello</span> <span class="nx">World</span><span class="p">!&lt;</span><span class="o">/</span><span class="nx">body</span><span class="p">&gt;&lt;</span><span class="o">/</span><span class="nx">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="newrecorder">
+<h3>NewRecorder 函数<a class="headerlink" href="#newrecorder" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NewRecorder</span><span class="p">()</span> <span class="o">*</span><span class="nx">ResponseRecorder</span>
+</pre></div>
+</div>
+<p>返回一个初始化后的 ResponseRecorder 。</p>
+</div>
+<div class="section" id="responserecorder-flush">
+<h3>(*ResponseRecorder) Flush 方法<a class="headerlink" href="#responserecorder-flush" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">Flush</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将 rw.Flushed 的值设置为 true 。</p>
+</div>
+<div class="section" id="responserecorder-header">
+<h3>(*ResponseRecorder) Header 方法<a class="headerlink" href="#responserecorder-header" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">Header</span><span class="p">()</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Header</span>
+</pre></div>
+</div>
+<p>返回响应的首部。</p>
+</div>
+<div class="section" id="responserecorder-result">
+<h3>(*ResponseRecorder) Result 方法<a class="headerlink" href="#responserecorder-result" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">Result</span><span class="p">()</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Response</span>
+</pre></div>
+</div>
+<p>返回处理器生成的响应。</p>
+<p>处理器返回的响应至少会对状态码（StatusCode）、首部（Header）、主体（Body）以及可选的 Trailer 进行设置。
+因为未来可能会有更多字段被设置，
+所以用户不应该在测试里面对结果调用 DeepEqual 。</p>
+<p>Response.Header 是写入操作第一次调用时的首部快照（snapshot of the headers）；
+另一方面，
+如果处理器没有执行过写入操作，
+那么 Response.Header 就是 Result 方法调用时的首部快照。</p>
+<p>Response.Body 将被生成为一个非 nil 值，
+而 Body.Read 则保证不会返回除 io.EOF 之外的其他任何错误。</p>
+<p>Result 必须在处理器执行完毕之后调用。</p>
+</div>
+<div class="section" id="responserecorder-write">
+<h3>(*ResponseRecorder) Write 方法<a class="headerlink" href="#responserecorder-write" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在 buf 不为 nil 的情况下，
+Write 总会成功地将 buf 中的内容写入到 rw.Body 当中。</p>
+</div>
+<div class="section" id="responserecorder-writeheader">
+<h3>(*ResponseRecorder) WriteHeader 方法<a class="headerlink" href="#responserecorder-writeheader" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">WriteHeader</span><span class="p">(</span><span class="nx">code</span> <span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>对 rw.Code 进行设置。
+在这个方法执行之后，
+修改 rw.Header 将不会对 rw.HeaderMap 产生任何影响。</p>
+</div>
+<div class="section" id="responserecorder-writestring">
+<h3>(*ResponseRecorder) WriteString 方法<a class="headerlink" href="#responserecorder-writestring" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">ResponseRecorder</span><span class="p">)</span> <span class="nx">WriteString</span><span class="p">(</span><span class="nx">str</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在 str 不为 nil 的情况下，
+WriteString 总会成功地将 buf 中的内容写入到 rw.Body 当中。</p>
+</div>
+</div>
+<div class="section" id="server">
+<h2>Server 类型<a class="headerlink" href="#server" title="永久链接至标题">¶</a></h2>
+<p>Server 是一个在本地回环接口（local loopback interface）的一个由系统选择的端口上进行监听的 HTTP 服务器，
+该服务器可以用于端对端 HTTP 测试。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Server</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// 一个末尾不包含斜线、格式为 http://ipaddr:port 的基本 URL</span>
+    <span class="nx">Listener</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Listener</span>
+
+    <span class="c1">// 可选的 TLS 配置选项（configuration），它将在 TLS 启动之后被设置成一个新的配置（config）。</span>
+    <span class="c1">// 如果用户在调用 StartTLS 之前，对一个尚未启动的服务器的 TLS 配置进行了设置，</span>
+    <span class="c1">// 那么已设置的字段将被拷贝至新配置里面。</span>
+    <span class="nx">TLS</span> <span class="o">*</span><span class="nx">tls</span><span class="p">.</span><span class="nx">Config</span>
+
+    <span class="c1">// Config 的值有可能在调用 NewUnstartedServer 之后或者调用</span>
+    <span class="c1">// Start 和 StartTLS 之前发生变化。</span>
+    <span class="nx">Config</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Server</span>
+
+    <span class="c1">// 其他已过滤或者未导出的字段……</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例代码：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;io/ioutil&quot;</span>
+	<span class="s">&quot;log&quot;</span>
+	<span class="s">&quot;net/http&quot;</span>
+	<span class="s">&quot;net/http/httptest&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ts</span> <span class="o">:=</span> <span class="nx">httptest</span><span class="p">.</span><span class="nx">NewServer</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">HandlerFunc</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;Hello, client&quot;</span><span class="p">)</span>
+	<span class="p">}))</span>
+	<span class="k">defer</span> <span class="nx">ts</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+
+	<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">ts</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">greeting</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+	<span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">greeting</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">Hello</span><span class="p">,</span> <span class="nx">client</span>
+</pre></div>
+</div>
+<div class="section" id="newserver">
+<h3>NewServer 函数<a class="headerlink" href="#newserver" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NewServer</span><span class="p">(</span><span class="nx">handler</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="o">*</span><span class="nx">Server</span>
+</pre></div>
+</div>
+<p>启动并返回一个新的服务器。
+调用者在使用完这个服务器之后需要调用 Close 方法将其关闭。</p>
+</div>
+<div class="section" id="newtlsserver">
+<h3>NewTLSServer 函数<a class="headerlink" href="#newtlsserver" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NewTLSServer</span><span class="p">(</span><span class="nx">handler</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="o">*</span><span class="nx">Server</span>
+</pre></div>
+</div>
+<p>启动并返回一个使用 TLS 的新服务器。
+调用者在使用完这个服务器之后需要调用 Close 方法将其关闭。</p>
+</div>
+<div class="section" id="newunstartedserver">
+<h3>NewUnstartedServer 函数<a class="headerlink" href="#newunstartedserver" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">NewUnstartedServer</span><span class="p">(</span><span class="nx">handler</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="o">*</span><span class="nx">Server</span>
+</pre></div>
+</div>
+<p>返回一个未启动的新服务器，
+用户应该在修改完服务器的配置选项之后，
+调用 Start 方法或者 StartTLS 方法来启动它，
+并在使用完这个服务器之后，
+调用 Close 方法将其关闭。</p>
+</div>
+<div class="section" id="server-close">
+<h3>(*Server) Close 方法<a class="headerlink" href="#server-close" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>关闭服务器，
+并且阻塞直到对该服务器的外部请求全部完成为止。</p>
+</div>
+<div class="section" id="server-closeclientconnections">
+<h3>(*Server) CloseClientConnections 方法<a class="headerlink" href="#server-closeclientconnections" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nx">CloseClientConnections</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>关闭所有连接至测试服务器的 HTTP 连接。</p>
+</div>
+<div class="section" id="server-start">
+<h3>(*Server) Start 方法<a class="headerlink" href="#server-start" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nx">Start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>启动 NewUnstartedServer 返回的服务器。</p>
+</div>
+<div class="section" id="server-starttls">
+<h3>(*Server) StartTLS 方法<a class="headerlink" href="#server-starttls" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nx">StartTLS</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>启动 NewUnstartedServer 返回的服务器上的 TLS 功能。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">httptest</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#id2">常量</a></li>
+<li><a class="reference internal" href="#newrequest">NewRequest 函数</a></li>
+<li><a class="reference internal" href="#responserecorder">ResponseRecorder 类型</a><ul>
+<li><a class="reference internal" href="#newrecorder">NewRecorder 函数</a></li>
+<li><a class="reference internal" href="#responserecorder-flush">(*ResponseRecorder) Flush 方法</a></li>
+<li><a class="reference internal" href="#responserecorder-header">(*ResponseRecorder) Header 方法</a></li>
+<li><a class="reference internal" href="#responserecorder-result">(*ResponseRecorder) Result 方法</a></li>
+<li><a class="reference internal" href="#responserecorder-write">(*ResponseRecorder) Write 方法</a></li>
+<li><a class="reference internal" href="#responserecorder-writeheader">(*ResponseRecorder) WriteHeader 方法</a></li>
+<li><a class="reference internal" href="#responserecorder-writestring">(*ResponseRecorder) WriteString 方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#server">Server 类型</a><ul>
+<li><a class="reference internal" href="#newserver">NewServer 函数</a></li>
+<li><a class="reference internal" href="#newtlsserver">NewTLSServer 函数</a></li>
+<li><a class="reference internal" href="#newunstartedserver">NewUnstartedServer 函数</a></li>
+<li><a class="reference internal" href="#server-close">(*Server) Close 方法</a></li>
+<li><a class="reference internal" href="#server-closeclientconnections">(*Server) CloseClientConnections 方法</a></li>
+<li><a class="reference internal" href="#server-start">(*Server) Start 方法</a></li>
+<li><a class="reference internal" href="#server-starttls">(*Server) StartTLS 方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="index.html"
+                        title="上一章">关于</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="database-sql.html"
+                        title="下一章">database/sql</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

@@ -24,6 +24,50 @@ sync 包提供了诸如互斥锁这样的基本同步原语。
 包含本包定义的类型的值不应该进行拷贝。
 
 
+Mutex 类型
+--------------------
+
+一个 Mutex 就是一个互斥锁，
+这种锁可以用作其他结构的一部分。
+
+Mutex 的零值是一个未上锁的互斥锁 。
+
+::
+
+    type Mutex struct {
+        // contains filtered or unexported fields
+    }
+
+(\*Mutex) Lock 方法
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    func (m *Mutex) Lock()
+
+对 m 进行加锁。
+
+如果 m 已经被加锁，
+那么执行该方法的 goroutine 将被阻塞直到 m 可用为止。
+
+
+(\*Mutex) Unlock 方法
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    func (m *Mutex) Unlock()
+
+解锁 m 。
+如果 m 并未加锁，
+那么引发一个运行时错误。
+
+被加锁的 Mutex 并不与特定的 goroutine 绑定，
+在一个 goroutine 里面对 Mutex 进行加锁，
+然后在另一个 goroutine 里面对 Mutex 进行解锁，
+这是完全可行的。
+
+
 WaitGroup 类型
 -------------------
 

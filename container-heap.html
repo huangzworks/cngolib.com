@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Go标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="net/http/httptest" href="net-http-httptest.html" />
+    <link rel="prev" title="关于" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='http://cngolib.com'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="container-heap">
+<h1>container/heap<a class="headerlink" href="#container-heap" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 container/heap 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/container/heap/">https://golang.org/pkg/container/heap/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>包 heap 为所有实现了 heap.Interface 的类型提供堆操作。
+一个堆即是一棵树，
+这棵树的每个节点的值都比它的子节点的值要小，
+而整棵树最小的值位于树根（root），
+也即是索引 0 的位置上。</p>
+<p>堆是实现优先队列的一种常见方法。
+为了构建优先队列，
+用户在实现堆接口时，
+需要让 Less() 方法返回逆序的结果，
+这样就可以在使用 Push 添加元素的同时，
+通过 Pop 移除队列中优先级最高的元素了。
+具体的实现请看接下来展示的优先队列例子。</p>
+<div class="section" id="id2">
+<h3>示例：整数堆<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="c1">// 这段代码演示了如何使用堆接口构建一个整数堆。</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;container/heap&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// IntHeap 是一个由整数组成的最小堆。</span>
+<span class="kd">type</span> <span class="nx">IntHeap</span> <span class="p">[]</span><span class="kt">int</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nx">Len</span><span class="p">()</span> <span class="kt">int</span>           <span class="p">{</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nx">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">IntHeap</span><span class="p">)</span> <span class="nx">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span>      <span class="p">{</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">h</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">IntHeap</span><span class="p">)</span> <span class="nx">Push</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="c1">// Push 和 Pop 使用 pointer receiver 作为参数，</span>
+	<span class="c1">// 因为它们不仅会对切片的内容进行调整，还会修改切片的长度。</span>
+	<span class="o">*</span><span class="nx">h</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">h</span><span class="p">,</span> <span class="nx">x</span><span class="p">.(</span><span class="kt">int</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">IntHeap</span><span class="p">)</span> <span class="nx">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">old</span> <span class="o">:=</span> <span class="o">*</span><span class="nx">h</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">old</span><span class="p">)</span>
+	<span class="nx">x</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="o">*</span><span class="nx">h</span> <span class="p">=</span> <span class="nx">old</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">return</span> <span class="nx">x</span>
+<span class="p">}</span>
+
+<span class="c1">// 这个示例会将一些整数插入到堆里面， 接着检查堆中的最小值，</span>
+<span class="c1">// 之后按顺序从堆里面移除各个整数。</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">h</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">IntHeap</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
+	<span class="nx">heap</span><span class="p">.</span><span class="nx">Init</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span>
+	<span class="nx">heap</span><span class="p">.</span><span class="nx">Push</span><span class="p">(</span><span class="nx">h</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;minimum: %d\n&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="nx">h</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="k">for</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Len</span><span class="p">()</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d &quot;</span><span class="p">,</span> <span class="nx">heap</span><span class="p">.</span><span class="nx">Pop</span><span class="p">(</span><span class="nx">h</span><span class="p">))</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">minimum</span><span class="p">:</span> <span class="mi">1</span>
+<span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">5</span> 
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>示例：优先队列<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="c1">// 这段代码演示了如何使用堆接口构建一个优先队列。</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;container/heap&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// Item 是优先队列中包含的元素。</span>
+<span class="kd">type</span> <span class="nx">Item</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">value</span>    <span class="kt">string</span> <span class="c1">// 元素的值，可以是任意字符串。</span>
+	<span class="nx">priority</span> <span class="kt">int</span>    <span class="c1">// 元素在队列中的优先级。</span>
+	<span class="c1">// 元素的索引可以用于更新操作，它由 heap.Interface 定义的方法维护。</span>
+	<span class="nx">index</span> <span class="kt">int</span> <span class="c1">// 元素在堆中的索引。</span>
+<span class="p">}</span>
+
+<span class="c1">// 一个实现了 heap.Interface 接口的优先队列，队列中包含任意多个 Item 结构。</span>
+<span class="kd">type</span> <span class="nx">PriorityQueue</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Item</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pq</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c1">// 我们希望 Pop 返回的是最大值而不是最小值，</span>
+	<span class="c1">// 因此这里使用大于号进行对比。</span>
+	<span class="k">return</span> <span class="nx">pq</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">priority</span> <span class="p">&gt;</span> <span class="nx">pq</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">priority</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">pq</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">pq</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">pq</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">pq</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+	<span class="nx">pq</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">index</span> <span class="p">=</span> <span class="nx">i</span>
+	<span class="nx">pq</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">index</span> <span class="p">=</span> <span class="nx">j</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="o">*</span><span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">Push</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="o">*</span><span class="nx">pq</span><span class="p">)</span>
+	<span class="nx">item</span> <span class="o">:=</span> <span class="nx">x</span><span class="p">.(</span><span class="o">*</span><span class="nx">Item</span><span class="p">)</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">index</span> <span class="p">=</span> <span class="nx">n</span>
+	<span class="o">*</span><span class="nx">pq</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="nx">pq</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="o">*</span><span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">old</span> <span class="o">:=</span> <span class="o">*</span><span class="nx">pq</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">old</span><span class="p">)</span>
+	<span class="nx">item</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">index</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1">// 为了安全性考虑而做的设置</span>
+	<span class="o">*</span><span class="nx">pq</span> <span class="p">=</span> <span class="nx">old</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">return</span> <span class="nx">item</span>
+<span class="p">}</span>
+
+<span class="c1">// 更新函数会修改队列中指定元素的优先级以及值。</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">pq</span> <span class="o">*</span><span class="nx">PriorityQueue</span><span class="p">)</span> <span class="nx">update</span><span class="p">(</span><span class="nx">item</span> <span class="o">*</span><span class="nx">Item</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">priority</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">value</span>
+	<span class="nx">item</span><span class="p">.</span><span class="nx">priority</span> <span class="p">=</span> <span class="nx">priority</span>
+	<span class="nx">heap</span><span class="p">.</span><span class="nx">Fix</span><span class="p">(</span><span class="nx">pq</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">index</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 这个示例首先会创建一个优先队列，并在队列中包含一些元素</span>
+<span class="c1">// 接着将一个新元素添加到队列里面，并对其进行操作</span>
+<span class="c1">// 最后按优先级有序地移除队列中的各个元素。</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 一些元素以及它们的优先级。</span>
+	<span class="nx">items</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span>
+		<span class="s">&quot;banana&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&quot;apple&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;pear&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 创建一个优先队列，并将上述元素放入到队列里面，</span>
+	<span class="c1">// 然后对队列进行初始化以满足优先队列（堆）的不变性。</span>
+	<span class="nx">pq</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="nx">PriorityQueue</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">items</span><span class="p">))</span>
+	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">priority</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">items</span> <span class="p">{</span>
+		<span class="nx">pq</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Item</span><span class="p">{</span>
+			<span class="nx">value</span><span class="p">:</span>    <span class="nx">value</span><span class="p">,</span>
+			<span class="nx">priority</span><span class="p">:</span> <span class="nx">priority</span><span class="p">,</span>
+			<span class="nx">index</span><span class="p">:</span>    <span class="nx">i</span><span class="p">,</span>
+		<span class="p">}</span>
+		<span class="nx">i</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="nx">heap</span><span class="p">.</span><span class="nx">Init</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pq</span><span class="p">)</span>
+
+	<span class="c1">// 插入一个新元素，然后修改它的优先级。</span>
+	<span class="nx">item</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Item</span><span class="p">{</span>
+		<span class="nx">value</span><span class="p">:</span>    <span class="s">&quot;orange&quot;</span><span class="p">,</span>
+		<span class="nx">priority</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">heap</span><span class="p">.</span><span class="nx">Push</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pq</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+	<span class="nx">pq</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1">// 以降序形式取出并打印队列中的所有元素。</span>
+	<span class="k">for</span> <span class="nx">pq</span><span class="p">.</span><span class="nx">Len</span><span class="p">()</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">item</span> <span class="o">:=</span> <span class="nx">heap</span><span class="p">.</span><span class="nx">Pop</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pq</span><span class="p">).(</span><span class="o">*</span><span class="nx">Item</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%.2d:%s &quot;</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">priority</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行结果：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="mo">05</span><span class="p">:</span><span class="nx">orange</span> <span class="mo">04</span><span class="p">:</span><span class="nx">pear</span> <span class="mo">03</span><span class="p">:</span><span class="nx">banana</span> <span class="mo">02</span><span class="p">:</span><span class="nx">apple</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="fix">
+<h2>Fix 函数<a class="headerlink" href="#fix" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">Fix</span><span class="p">(</span><span class="nx">h</span> <span class="nx">Interface</span><span class="p">,</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在索引 i 上的元素的值发生变化之后，
+重新修复堆的有序性。
+先修改索引 i 上的元素的值然后再执行 Fix ，
+跟先调用 Remove(h, i) 然后再使用 Push 操作将新值重新添加到堆里面的做法具有同等的效果，
+但前者所需的计算量稍微要少一些。</p>
+<p>Fix 函数的复杂度为 O(log(n)) ，
+其中 n 等于 h.Len() 。</p>
+</div>
+<div class="section" id="init">
+<h2>Init 函数<a class="headerlink" href="#init" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">Init</span><span class="p">(</span><span class="nx">h</span> <span class="nx">Interface</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在执行任何堆操作之前，
+必须对堆进行初始化。
+Init 操作对于堆不变性（invariants）具有幂等性，
+无论堆不变性是否有效，
+它都可以被调用。</p>
+<p>Init 函数的复杂度为 O(n) ，
+其中 n 等于 h.Len() 。</p>
+</div>
+<div class="section" id="pop">
+<h2>Pop 函数<a class="headerlink" href="#pop" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">Pop</span><span class="p">(</span><span class="nx">h</span> <span class="nx">Interface</span><span class="p">)</span> <span class="kd">interface</span><span class="p">{}</span>
+</pre></div>
+</div>
+<p>Pop 函数根据 Less 的结果，
+从堆中移除并返回具有最小值的元素，
+等同于执行 Remove(h, 0) 。</p>
+<p>Pop 函数的复杂度为 O(log(n)) ，
+其中 n 等于 h.Len() 。</p>
+</div>
+<div class="section" id="push">
+<h2>Push 函数<a class="headerlink" href="#push" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">Push</span><span class="p">(</span><span class="nx">h</span> <span class="nx">Interface</span><span class="p">,</span> <span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>Push 函数将值为 x 的元素推入到堆里面，
+该函数的复杂度为 O(log(n)) ，
+其中 n 等于 h.Len() 。</p>
+</div>
+<div class="section" id="remove">
+<h2>Remove 函数<a class="headerlink" href="#remove" title="永久链接至标题">¶</a></h2>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">Remove</span><span class="p">(</span><span class="nx">h</span> <span class="nx">Interface</span><span class="p">,</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="kd">interface</span><span class="p">{}</span>
+</pre></div>
+</div>
+<p>Remove 函数将移除堆中索引为 i 的元素，
+该函数的复杂度为 O(log(n)) ，
+其中 n 等于 h.Len() 。</p>
+</div>
+<div class="section" id="interface">
+<h2>Interface 类型<a class="headerlink" href="#interface" title="永久链接至标题">¶</a></h2>
+<p>任何实现了 heap.Interface 接口的类型，
+都可以用作带有以下不变性的最小堆，
+（换句话说，
+这个堆在为空、已排序或者调用 Init 之后，
+应该具有以下性质）：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="p">!</span><span class="nx">h</span><span class="p">.</span><span class="nx">Less</span><span class="p">(</span><span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="k">for</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Len</span><span class="p">()</span> <span class="nx">and</span> <span class="mi">2</span><span class="o">*</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="nx">j</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">i</span><span class="o">+</span><span class="mi">2</span> <span class="nx">and</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Len</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>注意，
+这个接口中的 Push 和 Pop 都是由 heap 包的实现负责调用的。
+因此用户在向堆添加元素又或者从堆中移除元素时，
+需要使用 heap.Push 以及 heap.Pop ：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Interface</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">sort</span><span class="p">.</span><span class="nx">Interface</span>
+    <span class="nx">Push</span><span class="p">(</span><span class="nx">x</span> <span class="kd">interface</span><span class="p">{})</span> <span class="c1">// 将 x 添加为元素 Len()</span>
+    <span class="nx">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span>   <span class="c1">// 移除并返回元素 Len() - 1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">container/heap</a><ul>
+<li><a class="reference internal" href="#id1">概述</a><ul>
+<li><a class="reference internal" href="#id2">示例：整数堆</a></li>
+<li><a class="reference internal" href="#id3">示例：优先队列</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fix">Fix 函数</a></li>
+<li><a class="reference internal" href="#init">Init 函数</a></li>
+<li><a class="reference internal" href="#pop">Pop 函数</a></li>
+<li><a class="reference internal" href="#push">Push 函数</a></li>
+<li><a class="reference internal" href="#remove">Remove 函数</a></li>
+<li><a class="reference internal" href="#interface">Interface 类型</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="index.html"
+                        title="上一章">关于</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="net-http-httptest.html"
+                        title="下一章">net/http/httptest</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

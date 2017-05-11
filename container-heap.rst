@@ -16,7 +16,7 @@ https://golang.org/pkg/container/heap/
     The minimum element in the tree is the root, at index 0.
 
 包 heap 为所有实现了 heap.Interface 的类型提供堆操作。
-一个堆既是一棵树，
+一个堆即是一棵树，
 这棵树的每个节点的值都比它的子节点的值要小，
 而整棵树最小的值位于树根（root），
 也即是索引 0 的位置上。
@@ -32,7 +32,7 @@ https://golang.org/pkg/container/heap/
 堆是实现优先队列的一种常见方法。
 为了构建优先队列，
 用户在实现堆接口时，
-让 Less() 方法返回逆序的结果，
+需要让 Less() 方法返回逆序的结果，
 这样就可以在使用 Push 添加元素的同时，
 通过 Pop 移除队列中优先级最高的元素了。
 具体的实现请看接下来展示的优先队列例子。
@@ -164,7 +164,7 @@ Interface 类型
 任何实现了 heap.Interface 接口的类型，
 都可以用作带有以下不变性的最小堆，
 （换句话说，
-这个堆在为空、已排序或者 Init 被调用之后，
+这个堆在为空、已排序或者调用 Init 之后，
 应该具有以下性质）：
 
 ::
@@ -178,7 +178,7 @@ Interface 类型
     use heap.Push and heap.Pop.
 
 注意，
-这个接口中的 Push 和 Pop 是由 heap 包的实现进行调用的。
+这个接口中的 Push 和 Pop 都是由 heap 包的实现负责调用的。
 因此用户在向堆添加元素又或者从堆中移除元素时，
 需要使用 heap.Push 以及 heap.Pop ：
 

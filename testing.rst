@@ -6,7 +6,7 @@ testing
 https://golang.org/pkg/testing/
 
 
-类型 B
+B 类型
 ---------------
 
 ..
@@ -342,7 +342,7 @@ SkipNow 必须在运行测试的 goroutine 中进行调用，
 就可以使用这个方法来暂时地停止计时。
 
 
-类型 T
+T 类型
 ---------------
 
 ..

@@ -1,0 +1,615 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Go标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="sync" href="sync.html" />
+    <link rel="prev" title="关于" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='http://cngolib.com'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="testing">
+<h1>testing<a class="headerlink" href="#testing" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 testing 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/testing/">https://golang.org/pkg/testing/</a></p>
+<div class="section" id="b">
+<h2>类型 B<a class="headerlink" href="#b" title="永久链接至标题">¶</a></h2>
+<p>B 是传递给基准测试函数的一种类型，
+它用于管理基准测试的计时行为，
+并指示应该迭代地运行测试多少次。</p>
+<p>一个基准测试在它的基准测试函数返回时，
+又或者在它的基准测试函数调用 FailNow 、 Fatal 、 Fatalf 、 SkipNow 、 Skip 或者 Skipf 中的任意一个方法时，
+测试即宣告结束。
+至于其他报告方法，
+比如 Log 和 Error 的变种，
+则可以在其他 goroutine 中同时进行调用。</p>
+<p>跟测试一样，
+基准测试会在执行的过程中积累日志，
+并在测试完毕时将日志转储到标准错误。
+但跟测试不一样的是，
+为了避免基准测试的结果受到日志打印操作的影响，
+基准测试总是会把日志打印出来。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">B</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">N</span> <span class="kt">int</span>
+    <span class="c1">// contains filtered or unexported fields</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="b-error">
+<h3>(*B) Error 方法<a class="headerlink" href="#b-error" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Error</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Error 相当于在调用 Log 之后调用 Fail 。</p>
+</div>
+<div class="section" id="b-errorf">
+<h3>(*B) Errorf 方法<a class="headerlink" href="#b-errorf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Errorf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Errorf 相当于在调用 Logf 之后调用 Fail 。</p>
+</div>
+<div class="section" id="b-fail">
+<h3>(*B) Fail 方法<a class="headerlink" href="#b-fail" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Fail</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前的测试函数标识为“失败”，
+但仍然继续执行该函数。</p>
+</div>
+<div class="section" id="b-failnow">
+<h3>(*B) FailNow 方法<a class="headerlink" href="#b-failnow" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">FailNow</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前的测试函数标识为“失败”，
+并停止执行该函数。
+在此之后，
+测试过程将在下一个测试或者下一个基准测试中继续。</p>
+<p>FailNow 必须在运行测试函数或者基准测试函数的 goroutine 中调用，
+而不能在测试期间创建的 goroutine 中调用。
+调用 FailNow 不会导致其他 goroutine 停止。</p>
+</div>
+<div class="section" id="b-failed">
+<h3>(*B) Failed 方法<a class="headerlink" href="#b-failed" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Failed</span><span class="p">()</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>Failed 用于报告测试函数是否已失败。</p>
+</div>
+<div class="section" id="b-fatal">
+<h3>(*B) Fatal 方法<a class="headerlink" href="#b-fatal" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Fatal</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Fatal 相当于在调用 Log 之后调用 FailNow 。</p>
+</div>
+<div class="section" id="b-fatalf">
+<h3>(*B) Fatalf 方法<a class="headerlink" href="#b-fatalf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Fatalf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Fatalf 相当于在调用 Logf 之后调用 FailNow 。</p>
+</div>
+<div class="section" id="b-log">
+<h3>(*B) Log 方法<a class="headerlink" href="#b-log" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Log</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>Log 使用与 Printf 相同的格式化语法对它的参数进行格式化，
+然后将格式化后的文本记录到错误日志里面。
+如果输入的格式化文本最末尾没有出现新行，
+那么将一个新行添加到格式化后的文本末尾。</p>
+<p>对于测试来说，
+Logf 产生的格式化文本只会在测试失败或者设置了 -test.v 标志的情况下被打印出来；
+对于基准测试来说，
+为了避免 -test.v 标志的值对测试的性能产生影响，
+Logf 产生的格式化文本总会被打印出来。</p>
+</div>
+<div class="section" id="b-logf">
+<h3>(*B) Logf 方法<a class="headerlink" href="#b-logf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Logf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>Log 使用与 Printf 相同的格式化语法对它的参数进行格式化，
+然后将格式化后的文本记录到错误日志里面。
+如果输入的格式化文本最末尾没有出现新行，
+那么将一个新行添加到格式化后的文本末尾。</p>
+<p>对于测试来说，
+Logf 产生的格式化文本只会在测试失败或者设置了 -test.v 标志的情况下被打印出来；
+对于基准测试来说，
+为了避免 -test.v 标志的值对测试的性能产生影响，
+Logf 产生的格式化文本总会被打印出来。</p>
+</div>
+<div class="section" id="b-name">
+<h3>(*B) Name 方法<a class="headerlink" href="#b-name" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Name</span><span class="p">()</span> <span class="kt">string</span>
+</pre></div>
+</div>
+<p>返回正在运行的测试或者基准测试的名字。</p>
+</div>
+<div class="section" id="b-reportallocs">
+<h3>(*B) ReportAllocs 方法<a class="headerlink" href="#b-reportallocs" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">ReportAllocs</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>打开当前基准测试的内存统计功能，
+与使用 -test.benchmem 设置类似，
+但 ReportAllocs 只影响那些调用了该函数的基准测试。</p>
+</div>
+<div class="section" id="b-resettimer">
+<h3>(*B) ResetTimer 方法<a class="headerlink" href="#b-resettimer" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">ResetTimer</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>对已经逝去的基准测试时间以及内存分配计数器进行清零。
+对于正在运行中的计时器，
+这个方法不会产生任何效果。</p>
+</div>
+<div class="section" id="b-run">
+<h3>(*B) Run 方法<a class="headerlink" href="#b-run" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Run</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">))</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>执行名字为 name 的子基准测试（subbenchmark）f ，
+并报告 f 在执行过程中是否出现了任何失败。</p>
+<p>子基准测试跟其他普通的基准测试一样。
+一个调用了 Run 方法至少一次的基准测试将不会对其自身进行测量（measure），
+并且在 N 为 1 时，
+这个基准测试将只会被执行一次。</p>
+<p>Run 可以同时在多个 goroutine 中被调用，
+但这些调用必须发生在 b 的外部基准函数（outer benchmark function）返回之前。</p>
+</div>
+<div class="section" id="b-runparallel">
+<h3>(*B) RunParallel 方法<a class="headerlink" href="#b-runparallel" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">RunParallel</span><span class="p">(</span><span class="nx">body</span> <span class="kd">func</span><span class="p">(</span><span class="o">*</span><span class="nx">PB</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>以并行的方式执行给定的基准测试。
+RunParallel 会创建出多个 goroutine ，
+并将 b.N 个迭代分配给这些 goroutine 执行，
+其中 goroutine 数量的默认值为 GOMAXPROCS 。
+用户如果想要增加非CPU受限（non-CPU-bound）基准测试的并行性，
+那么可以在 RunParallel 之前调用 SetParallelism 。
+RunParallel 通常会与 -cpu 标志一同使用。</p>
+<p>body 函数将在每个 goroutine 中执行，
+这个函数需要设置所有 goroutine 本地的状态，
+并迭代直到 pb.Next 返回 false 值为止。
+因为 StartTimer 、 StopTimer 和 ResetTimer 这三个函数都带有全局作用，
+所以 body 函数不应该调用这些函数；
+除此之外，
+body 函数也不应该调用 Run 函数。</p>
+<p>执行示例：</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;bytes&quot;</span>
+	<span class="s">&quot;testing&quot;</span>
+	<span class="s">&quot;text/template&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// Parallel benchmark for text/template.Template.Execute on a single object.</span>
+	<span class="nx">testing</span><span class="p">.</span><span class="nx">Benchmark</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">templ</span> <span class="o">:=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">Must</span><span class="p">(</span><span class="nx">template</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">).</span><span class="nx">Parse</span><span class="p">(</span><span class="s">&quot;Hello, {{.}}!&quot;</span><span class="p">))</span>
+		<span class="c1">// RunParallel will create GOMAXPROCS goroutines</span>
+		<span class="c1">// and distribute work among them.</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nx">RunParallel</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">pb</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">PB</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">// Each goroutine has its own bytes.Buffer.</span>
+			<span class="kd">var</span> <span class="nx">buf</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+			<span class="k">for</span> <span class="nx">pb</span><span class="p">.</span><span class="nx">Next</span><span class="p">()</span> <span class="p">{</span>
+				<span class="c1">// The loop body is executed b.N times total across all goroutines.</span>
+				<span class="nx">buf</span><span class="p">.</span><span class="nx">Reset</span><span class="p">()</span>
+				<span class="nx">templ</span><span class="p">.</span><span class="nx">Execute</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">buf</span><span class="p">,</span> <span class="s">&quot;World&quot;</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">})</span>
+	<span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>输出：</p>
+<div class="highlight-go"><div class="highlight"><pre>$ go test -v -bench .
+PASS
+ok      _/Users/huangz/cngolib.com/code/testing 0.006s
+</pre></div>
+</div>
+</div>
+<div class="section" id="b-setbytes">
+<h3>(*B) SetBytes 方法<a class="headerlink" href="#b-setbytes" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">SetBytes</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int64</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>记录在单个操作中处理的字节数量。
+在调用了这个方法之后，
+基准测试将会报告 ns/op 以及 MB/s 。</p>
+</div>
+<div class="section" id="b-setparallelism">
+<h3>(*B) SetParallelism 方法<a class="headerlink" href="#b-setparallelism" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">SetParallelism</span><span class="p">(</span><span class="nx">p</span> <span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>将 RunParallel 使用的 goroutine 数量设置为 p*GOMAXPROCS ，
+如果 p 小于 1 ，
+那么调用将不产生任何效果。</p>
+<p>CPU受限（CPU-bound）的基准测试通常不需要调用这个方法。</p>
+</div>
+<div class="section" id="b-skip">
+<h3>(*B) Skip 方法<a class="headerlink" href="#b-skip" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Skip</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Skip 相当于在调用 Log 之后调用 SkipNow 。</p>
+</div>
+<div class="section" id="b-skipnow">
+<h3>(*B) SkipNow 方法<a class="headerlink" href="#b-skipnow" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">SkipNow</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前测试标识为“被跳过”并停止执行该测试。
+如果一个测试在失败（参考 Error 、 Errorf 和 Fail）之后被跳过了，
+那么它还是会被判断为是“失败的”。</p>
+<p>在停止当前测试之后，
+测试过程将在下一个测试或者下一个基准测试中继续，
+具体请参考 FailNow 。</p>
+<p>SkipNow 必须在运行测试的 goroutine 中进行调用，
+而不能在测试期间创建的 goroutine 中调用。
+调用 SkipNow 不会导致其他 goroutine 停止。</p>
+</div>
+<div class="section" id="b-skipf">
+<h3>(*B) Skipf 方法<a class="headerlink" href="#b-skipf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Skipf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Skipf 相当于在调用 Logf 之后调用 SkipNow 。</p>
+</div>
+<div class="section" id="b-skipped">
+<h3>(*B) Skipped 方法<a class="headerlink" href="#b-skipped" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">Skipped</span><span class="p">()</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>报告测试是否已被跳过。</p>
+</div>
+<div class="section" id="b-starttimer">
+<h3>(*B) StartTimer 方法<a class="headerlink" href="#b-starttimer" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">StartTimer</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>开始对测试进行计时。</p>
+<p>这个函数在基准测试开始时会自动被调用，
+它也可以在调用 StopTimer 之后恢复进行计时。</p>
+</div>
+<div class="section" id="b-stoptimer">
+<h3>(*B) StopTimer 方法<a class="headerlink" href="#b-stoptimer" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">B</span><span class="p">)</span> <span class="nx">StopTimer</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>停止对测试进行计时。</p>
+<p>当你需要执行一些复杂的初始化操作，
+并且你不想对这些操作进行测量时，
+就可以使用这个方法来暂时地停止计时。</p>
+</div>
+</div>
+<div class="section" id="t">
+<h2>类型 T<a class="headerlink" href="#t" title="永久链接至标题">¶</a></h2>
+<p>T 是传递给测试函数的一种类型，
+它用于维护测试状态并支持格式化的测试日志。
+测试日志会在执行测试的过程中不断累积，
+并在测试完成时转储至标准输出。</p>
+<p>当一个测试的测试函数返回时，
+又或者当一个测试函数调用 FailNow 、 Fatal 、 Fatalf 、 SkipNow 、 Skip 或者 Skipf 中的任意一个时，
+该测试即宣告结束。
+跟 Parallel 方法一样，
+以上提到的这些方法只能在运行测试函数的 goroutine 中调用。</p>
+<p>至于其他报告方法，
+比如 Log 以及 Error 的变种，
+则可以在多个 goroutine 中同时进行调用。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">T</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// contains filtered or unexported fields</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="t-error">
+<h3>(*T) Error 方法<a class="headerlink" href="#t-error" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Error</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Error 相当于在调用 Log 之后调用 Fail 。</p>
+</div>
+<div class="section" id="t-errorf">
+<h3>(*T) Errorf 方法<a class="headerlink" href="#t-errorf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Errorf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Errorf 相当于在调用 Logf 之后调用 Fail 。</p>
+</div>
+<div class="section" id="t-fail">
+<h3>(*T) Fail 方法<a class="headerlink" href="#t-fail" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Fail</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前测试标识为失败，
+但是仍继续执行该测试。</p>
+</div>
+<div class="section" id="t-failnow">
+<h3>(*T) FailNow 方法<a class="headerlink" href="#t-failnow" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">FailNow</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前测试标识为失败并停止执行该测试，
+在此之后，
+测试过程将在下一个测试或者下一个基准测试中继续。</p>
+<p>FailNow 必须在运行测试函数或者基准测试函数的 goroutine 中调用，
+而不能在测试期间创建的 goroutine 中调用。
+调用 FailNow 不会导致其他 goroutine 停止。</p>
+</div>
+<div class="section" id="t-failed">
+<h3>(*T) Failed 方法<a class="headerlink" href="#t-failed" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Failed</span><span class="p">()</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>Failed 用于报告测试函数是否已失败。</p>
+</div>
+<div class="section" id="t-fatal">
+<h3>(*T) Fatal 方法<a class="headerlink" href="#t-fatal" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Fatal</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Fatal 相当于在调用 Log 之后调用 FailNow 。</p>
+</div>
+<div class="section" id="t-fatalf">
+<h3>(*T) Fatalf 方法<a class="headerlink" href="#t-fatalf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Fatalf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Fatalf 相当于在调用 Logf 之后调用 FailNow 。</p>
+</div>
+<div class="section" id="t-log">
+<h3>(*T) Log 方法<a class="headerlink" href="#t-log" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Log</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>Log 使用与 Println 相同的格式化语法对它的参数进行格式化，
+然后将格式化后的文本记录到错误日志里面：</p>
+<ul class="simple">
+<li>对于测试来说，
+格式化文本只会在测试失败或者设置了 -test.v 标志的情况下被打印出来；</li>
+<li>对于基准测试来说，
+为了避免 -test.v 标志的值对测试的性能产生影响，
+格式化文本总会被打印出来。</li>
+</ul>
+</div>
+<div class="section" id="t-logf">
+<h3>(*T) Logf 方法<a class="headerlink" href="#t-logf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Logf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>Log 使用与 Printf 相同的格式化语法对它的参数进行格式化，
+然后将格式化后的文本记录到错误日志里面。
+如果输入的格式化文本最末尾没有出现新行，
+那么将一个新行添加到格式化后的文本末尾。</p>
+<p>对于测试来说，
+Logf 产生的格式化文本只会在测试失败或者设置了 -test.v 标志的情况下被打印出来；
+对于基准测试来说，
+为了避免 -test.v 标志的值对测试的性能产生影响，
+Logf 产生的格式化文本总会被打印出来。</p>
+</div>
+<div class="section" id="t-name">
+<h3>(*T) Name 方法<a class="headerlink" href="#t-name" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Name</span><span class="p">()</span> <span class="kt">string</span>
+</pre></div>
+</div>
+<p>返回正在运行的测试或基准测试的名字。</p>
+</div>
+<div class="section" id="t-parallel">
+<h3>(*T) Parallel 方法<a class="headerlink" href="#t-parallel" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Parallel</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Parallel 用于表示当前测试只会与其他带有 Parallel 方法的测试并行进行测试。</p>
+</div>
+<div class="section" id="t-run">
+<h3>(*T) Run 方法<a class="headerlink" href="#t-run" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Run</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">T</span><span class="p">))</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>执行名字为 name 的子测试 f ，
+并报告 f 在执行过程中是否出现了任何失败。
+Run 将一直阻塞直到 f 的所有并行测试执行完毕。</p>
+<p>Run 可以在多个 goroutine 里面同时进行调用，
+但这些调用必须发生在 t 的外层测试函数（outer test function）返回之前。</p>
+</div>
+<div class="section" id="t-skip">
+<h3>(*T) Skip 方法<a class="headerlink" href="#t-skip" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Skip</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Skip 相当于在调用 Log 之后调用 SkipNow 。</p>
+</div>
+<div class="section" id="t-skipnow">
+<h3>(*T) SkipNow 方法<a class="headerlink" href="#t-skipnow" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">SkipNow</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>将当前测试标识为“被跳过”并停止执行该测试。
+如果一个测试在失败（参考 Error 、 Errorf 和 Fail）之后被跳过了，
+那么它还是会被判断为是“失败的”。</p>
+<p>在停止当前测试之后，
+测试过程将在下一个测试或者下一个基准测试中继续，
+具体请参考 FailNow 。</p>
+<p>SkipNow 必须在运行测试的 goroutine 中进行调用，
+而不能在测试期间创建的 goroutine 中调用。
+调用 SkipNow 不会导致其他 goroutine 停止。</p>
+</div>
+<div class="section" id="t-skipf">
+<h3>(*T) Skipf 方法<a class="headerlink" href="#t-skipf" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Skipf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+</pre></div>
+</div>
+<p>调用 Skipf 相当于在调用 Logf 之后调用 SkipNow 。</p>
+</div>
+<div class="section" id="t-skipped">
+<h3>(*T) Skipped 方法<a class="headerlink" href="#t-skipped" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">T</span><span class="p">)</span> <span class="nx">Skipped</span><span class="p">()</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+<p>Skipped 用于报告测试函数是否已被跳过。</p>
+</div>
+</div>
+<div class="section" id="tb">
+<h2>TB 类型<a class="headerlink" href="#tb" title="永久链接至标题">¶</a></h2>
+<p>TB 类型同时拥有 T 类型和 B 类型提供的接口。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">TB</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Error</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Errorf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Fail</span><span class="p">()</span>
+    <span class="nx">FailNow</span><span class="p">()</span>
+    <span class="nx">Failed</span><span class="p">()</span> <span class="kt">bool</span>
+    <span class="nx">Fatal</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Fatalf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Log</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Logf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Name</span><span class="p">()</span> <span class="kt">string</span>
+    <span class="nx">Skip</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">SkipNow</span><span class="p">()</span>
+    <span class="nx">Skipf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span>
+    <span class="nx">Skipped</span><span class="p">()</span> <span class="kt">bool</span>
+    <span class="c1">// contains filtered or unexported methods</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">testing</a><ul>
+<li><a class="reference internal" href="#b">类型 B</a><ul>
+<li><a class="reference internal" href="#b-error">(*B) Error 方法</a></li>
+<li><a class="reference internal" href="#b-errorf">(*B) Errorf 方法</a></li>
+<li><a class="reference internal" href="#b-fail">(*B) Fail 方法</a></li>
+<li><a class="reference internal" href="#b-failnow">(*B) FailNow 方法</a></li>
+<li><a class="reference internal" href="#b-failed">(*B) Failed 方法</a></li>
+<li><a class="reference internal" href="#b-fatal">(*B) Fatal 方法</a></li>
+<li><a class="reference internal" href="#b-fatalf">(*B) Fatalf 方法</a></li>
+<li><a class="reference internal" href="#b-log">(*B) Log 方法</a></li>
+<li><a class="reference internal" href="#b-logf">(*B) Logf 方法</a></li>
+<li><a class="reference internal" href="#b-name">(*B) Name 方法</a></li>
+<li><a class="reference internal" href="#b-reportallocs">(*B) ReportAllocs 方法</a></li>
+<li><a class="reference internal" href="#b-resettimer">(*B) ResetTimer 方法</a></li>
+<li><a class="reference internal" href="#b-run">(*B) Run 方法</a></li>
+<li><a class="reference internal" href="#b-runparallel">(*B) RunParallel 方法</a></li>
+<li><a class="reference internal" href="#b-setbytes">(*B) SetBytes 方法</a></li>
+<li><a class="reference internal" href="#b-setparallelism">(*B) SetParallelism 方法</a></li>
+<li><a class="reference internal" href="#b-skip">(*B) Skip 方法</a></li>
+<li><a class="reference internal" href="#b-skipnow">(*B) SkipNow 方法</a></li>
+<li><a class="reference internal" href="#b-skipf">(*B) Skipf 方法</a></li>
+<li><a class="reference internal" href="#b-skipped">(*B) Skipped 方法</a></li>
+<li><a class="reference internal" href="#b-starttimer">(*B) StartTimer 方法</a></li>
+<li><a class="reference internal" href="#b-stoptimer">(*B) StopTimer 方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#t">类型 T</a><ul>
+<li><a class="reference internal" href="#t-error">(*T) Error 方法</a></li>
+<li><a class="reference internal" href="#t-errorf">(*T) Errorf 方法</a></li>
+<li><a class="reference internal" href="#t-fail">(*T) Fail 方法</a></li>
+<li><a class="reference internal" href="#t-failnow">(*T) FailNow 方法</a></li>
+<li><a class="reference internal" href="#t-failed">(*T) Failed 方法</a></li>
+<li><a class="reference internal" href="#t-fatal">(*T) Fatal 方法</a></li>
+<li><a class="reference internal" href="#t-fatalf">(*T) Fatalf 方法</a></li>
+<li><a class="reference internal" href="#t-log">(*T) Log 方法</a></li>
+<li><a class="reference internal" href="#t-logf">(*T) Logf 方法</a></li>
+<li><a class="reference internal" href="#t-name">(*T) Name 方法</a></li>
+<li><a class="reference internal" href="#t-parallel">(*T) Parallel 方法</a></li>
+<li><a class="reference internal" href="#t-run">(*T) Run 方法</a></li>
+<li><a class="reference internal" href="#t-skip">(*T) Skip 方法</a></li>
+<li><a class="reference internal" href="#t-skipnow">(*T) SkipNow 方法</a></li>
+<li><a class="reference internal" href="#t-skipf">(*T) Skipf 方法</a></li>
+<li><a class="reference internal" href="#t-skipped">(*T) Skipped 方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tb">TB 类型</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="index.html"
+                        title="上一章">关于</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="sync.html"
+                        title="下一章">sync</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

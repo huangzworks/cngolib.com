@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Go标准库中文文档</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="top" title="Go 标准库中文文档" href="index.html" />
+    <link rel="next" title="container/heap" href="container-heap.html" />
+    <link rel="prev" title="testing" href="testing.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+<div class="header" role="banner">
+  <a href='http://cngolib.com'><h1>Go 标准库中文文档</h1></a>
+  <p>cngolib.com · Go开发团队/著 · 黄健宏/译</p>
+  <!--
+  <div class="logo">
+    <a href="index.html">
+      <img class="logo" src="_static/" alt="Logo"/>
+    </a>
+  </div>
+  -->
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sync">
+<h1>sync<a class="headerlink" href="#sync" title="永久链接至标题">¶</a></h1>
+<p>本文是 Go 标准库中 sync 包文档的翻译，
+原文地址为：
+<a class="reference external" href="https://golang.org/pkg/sync/">https://golang.org/pkg/sync/</a></p>
+<div class="section" id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>sync 包提供了诸如互斥锁这样的基本同步原语。
+除了 Once 类型和 WaitGroup 类型之外，
+包中的大多数其他类型都是为底层函数库程序准备的。
+高层次的同步最好还是通过 channel 以及 communication 来完成。</p>
+<p>包含本包定义的类型的值不应该进行拷贝。</p>
+</div>
+<div class="section" id="mutex">
+<h2>Mutex 类型<a class="headerlink" href="#mutex" title="永久链接至标题">¶</a></h2>
+<p>一个 Mutex 就是一个互斥锁，
+这种锁可以用作其他结构的一部分。</p>
+<p>Mutex 的零值是一个未上锁的互斥锁 。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// contains filtered or unexported fields</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="mutex-lock">
+<h3>(*Mutex) Lock 方法<a class="headerlink" href="#mutex-lock" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nx">Lock</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>对 m 进行加锁。</p>
+<p>如果 m 已经被加锁，
+那么执行该方法的 goroutine 将被阻塞直到 m 可用为止。</p>
+</div>
+<div class="section" id="mutex-unlock">
+<h3>(*Mutex) Unlock 方法<a class="headerlink" href="#mutex-unlock" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nx">Unlock</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>解锁 m 。
+如果 m 并未加锁，
+那么引发一个运行时错误。</p>
+<p>被加锁的 Mutex 并不与特定的 goroutine 绑定，
+在一个 goroutine 里面对 Mutex 进行加锁，
+然后在另一个 goroutine 里面对 Mutex 进行解锁，
+这是完全可行的。</p>
+</div>
+</div>
+<div class="section" id="waitgroup">
+<h2>WaitGroup 类型<a class="headerlink" href="#waitgroup" title="永久链接至标题">¶</a></h2>
+<p>一个 WaitGroup 会等待一系列 goroutine 直到它们全部运行完毕为止。
+主 goroutine 通过调用 Add 方法来设置需要等待的 goroutine 数量，
+而每个运行的 goroutine 则在它们运行完毕时调用 Done 方法。
+与此同时，
+调用 Wait 方法可以阻塞直到所有 goroutine 都运行完毕为止。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">type</span> <span class="nx">WaitGroup</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// 其他已过滤或者未导出字段……</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3>示例<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>这个示例会并发地获取给定的多个 URL ，
+并使用 WaitGroup 进行阻塞，
+直到所有获取操作都已完成为止。</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+<span class="kd">var</span> <span class="nx">urls</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+        <span class="s">&quot;http://www.golang.org/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;http://www.google.com/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;http://www.somestupidname.com/&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">url</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">urls</span> <span class="p">{</span>
+        <span class="c1">// 对 WaitGroup 计数器执行加一操作</span>
+        <span class="nx">wg</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1">// 启动一个 goroutine ，用于获取给定的 URL </span>
+        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// 在 goroutine 执行完毕时，对计数器执行减一操作</span>
+            <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nx">Done</span><span class="p">()</span>
+            <span class="c1">// 获取 URL</span>
+            <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+        <span class="p">}(</span><span class="nx">url</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 等待直到所有 HTTP 获取操作都执行完毕为止</span>
+<span class="nx">wg</span><span class="p">.</span><span class="nx">Wait</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="waitgroup-add">
+<h3>(*WaitGroup) Add 方法<a class="headerlink" href="#waitgroup-add" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nx">Add</span><span class="p">(</span><span class="nx">delta</span> <span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>为 WaitGroup 计数器加上给定的增量 delta ，
+其中 delta 的值可以为负数。
+当计数器的值变为 0 时，
+所有被 Wait 阻塞的 goroutine 都将被释放。
+当计数器的值变为负数时，
+Add 调用将引发一个 panic 。</p>
+<p>当计数器的值为 0 时，
+delta 的值只能为正数，
+并且对 Add 的调用必须出现在 Wait 调用之前；
+当计数器的值大于 0 时，
+delta 的值既可以是正数也可以是负数，
+并且对 Add 的调用可以发生在任何时候。
+简单来说，
+这意味着 Add 必须在创建 goroutine 的语句之前调用，
+又或者在其他需要等待的事件之前调用。</p>
+<p>在重复使用同一个 WaitGroup 对不同的独立事件集合（independent sets of events）进行等待时，
+新的 Add 调用必须发生在之前的所有 Wait 调用均已返回的情况下。</p>
+</div>
+<div class="section" id="waitgroup-done">
+<h3>(*WaitGroup) Done 方法<a class="headerlink" href="#waitgroup-done" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nx">Done</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>对 WaitGroup 计数器执行减一操作。</p>
+</div>
+<div class="section" id="waitgroup-wait">
+<h3>(*WaitGroup) Wait 方法<a class="headerlink" href="#waitgroup-wait" title="永久链接至标题">¶</a></h3>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">wg</span> <span class="o">*</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="nx">Wait</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>阻塞直至 WaitGroup 计数器的值为 0 。</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">內容目录</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sync</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#mutex">Mutex 类型</a><ul>
+<li><a class="reference internal" href="#mutex-lock">(*Mutex) Lock 方法</a></li>
+<li><a class="reference internal" href="#mutex-unlock">(*Mutex) Unlock 方法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waitgroup">WaitGroup 类型</a><ul>
+<li><a class="reference internal" href="#id2">示例</a></li>
+<li><a class="reference internal" href="#waitgroup-add">(*WaitGroup) Add 方法</a></li>
+<li><a class="reference internal" href="#waitgroup-done">(*WaitGroup) Done 方法</a></li>
+<li><a class="reference internal" href="#waitgroup-wait">(*WaitGroup) Wait 方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>上一个主题</h4>
+  <p class="topless"><a href="testing.html"
+                        title="上一章">testing</a></p>
+  <h4>下一个主题</h4>
+  <p class="topless"><a href="container-heap.html"
+                        title="下一章">container/heap</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>快速搜索</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="转向" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    输入相关的术语，模块，类或者函数名称进行搜索
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; 版权所有 2017, 黄健宏.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3 创建。
+    </div>
+  </body>
+</html>

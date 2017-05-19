@@ -15,6 +15,7 @@
 .. toctree::
    :maxdepth: 2
 
+   testing 
    sync
    container-heap
    net-http-httptest

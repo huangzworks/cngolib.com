@@ -38,3 +38,15 @@
 Portions of this page are modifications based on work created and `shared by Google <https://developers.google.com/terms/site-policies>`_ and used according to terms described in the `Creative Commons 3.0 Attribution License <http://creativecommons.org/licenses/by/3.0/>`_ .
 
 
+关联项目
+---------------
+
+.. image:: image/gwp.png
+   :align: left
+
+本项目是译者在翻译《Go web 编程》一书时创建的一个副项目（side project），
+喜欢本项目的朋友可以考虑通过购买《Go web 编程》来支持译者的工作。
+
+关于《Go web 编程》的更多信息，
+请访问该书的读者服务网站进行查看：
+http://gwpcn.com/
